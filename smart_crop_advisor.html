@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriFusion — Smart Crop Advisor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Palette: harvest gold + soil charcoal + terracotta clay ── */
+  --ink:        #17241B;
+  --ink-2:      #22331F;
+  --ink-3:      #2C402E;
+  --paper:      #F6F1E4;
+  --card-bg:    #FFFDF7;
+  --surface:    #EFE7D5;
+  --border:     rgba(23,36,27,0.14);
+  --text:       #1C2A1D;
+  --muted:      #647163;
+
+  --gold:       #D89A2C;
+  --gold-deep:  #B27D1E;
+  --gold-pale:  #F8E9C9;
+
+  --clay:       #B85B3E;
+  --clay-pale:  #F5DDD1;
+
+  --paddy:      #3D7A44;
+  --paddy-pale: #DEEBD7;
+
+  --sky:        #3C6E8C;
+  --sky-pale:   #DCE9EE;
+
+  --danger:     #B23A2E;
+  --danger-pale:#F6DCD6;
+
+  --radius:     18px;
+  --radius-md:  12px;
+  --radius-sm:  8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.app { font-family: 'DM Sans', sans-serif; min-height: 600px; background: var(--paper); }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ═══════════════════ AUTH ═══════════════════ */
+.auth-wrap {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(216,154,44,0.14), transparent 42%),
+    radial-gradient(circle at 88% 82%, rgba(216,154,44,0.10), transparent 46%),
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px, transparent 1px, transparent 14px),
+    linear-gradient(160deg, var(--ink) 0%, var(--ink-2) 55%, var(--ink-3) 100%);
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.auth-card {
+  background: var(--card-bg);
+  border-radius: 22px;
+  border-top: 3px solid var(--gold);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+}
+.auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+.auth-logo-icon {
+  width: 42px; height: 42px;
+  background: var(--ink);
+  border: 1.5px solid var(--gold);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px;
+}
+.auth-logo-title { font-family: 'Fraunces', serif; font-size: 19px; color: var(--ink); font-weight: 600; letter-spacing: 0.2px; }
+.auth-logo-sub { font-size: 11px; color: var(--gold-deep); font-weight: 500; margin-top: 1px; }
+.auth-intro {
+  font-size: 12px; color: var(--paddy); background: var(--paddy-pale);
+  padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 20px;
+  border: 1px solid rgba(61,122,68,0.25); line-height: 1.5;
+}
+.auth-intro strong { color: var(--ink); }
+.auth-tabs { display: flex; margin-bottom: 1.5rem; background: var(--surface); border-radius: 10px; padding: 3px; }
+.auth-tab {
+  flex: 1; padding: 9px; text-align: center; cursor: pointer;
+  border-radius: 8px; font-size: 13.5px; font-weight: 500;
+  color: var(--muted); border: none; background: transparent;
+  transition: all 0.2s;
+}
+.auth-tab.active { background: var(--card-bg); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.10); }
+.field-group { margin-bottom: 14px; }
+.field-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 5px; display: block; }
+.field-input {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; color: var(--text);
+  background: var(--card-bg); outline: none; font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(--gold); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-primary {
+  width: 100%; padding: 12px;
+  background: var(--ink);
+  color: var(--gold-pale); border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; margin-top: 6px;
+  transition: background 0.2s; letter-spacing: 0.2px;
+}
+.btn-primary:hover { background: var(--ink-2); }
+.auth-footer { text-align: center; margin-top: 1rem; font-size: 12px; color: #9a9384; }
+.auth-footer span { color: var(--gold-deep); cursor: pointer; font-weight: 600; }
+.divider { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-text { font-size: 11px; color: #a39c8d; }
+
+/* ═══════════════════ DASHBOARD SHELL ═══════════════════ */
+.dash-layout { display: flex; min-height: 600px; }
+.sidebar {
+  width: 208px; background: var(--ink); flex-shrink: 0;
+  display: flex; flex-direction: column; padding: 1.5rem 0;
+}
+.sidebar-logo {
+  padding: 0 1.25rem 1.5rem;
+  font-family: 'Fraunces', serif;
+  font-size: 15px; color: var(--gold-pale); font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; gap: 9px;
+}
+.sidebar-logo span { font-size: 19px; }
+.sidebar-nav { flex: 1; padding: 1rem 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 1.25rem; cursor: pointer;
+  color: rgba(255,255,255,0.55); font-size: 13.5px;
+  transition: all 0.18s; border: none; background: transparent;
+  width: 100%; text-align: left; font-family: 'DM Sans', sans-serif;
+}
+.nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-item.active { border-right: 3px solid var(--gold); }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+.nav-item.active .nav-dot { background: var(--gold); }
+.sidebar-user {
+  padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; gap: 10px;
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--ink-3);
+  border: 1px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 12px; color: var(--gold-pale); flex-shrink: 0;
+}
+.sidebar-user-name { font-size: 13px; color: #fff; font-weight: 500; }
+.sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.45); }
+
+.dash-main { flex: 1; overflow: auto; background: var(--surface); }
+
+.dash-header {
+  background: var(--card-bg); border-bottom: 0.5px solid var(--border);
+  padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 2;
+}
+.dash-header-title { font-family: 'Fraunces', serif; font-size: 18px; color: var(--text); font-weight: 600; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.badge-pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--paddy-pale); color: var(--paddy); }
+.btn-sm {
+  padding: 7px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--ink); color: var(--ink);
+  background: transparent; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.btn-sm:hover { background: var(--surface); }
+.btn-sm.filled { background: var(--ink); color: var(--gold-pale); border-color: var(--ink); }
+.btn-sm.filled:hover { background: var(--ink-2); }
+
+.dash-content { padding: 1.5rem; }
+
+/* ── HERO ── */
+.hero-card {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-2) 55%, var(--ink-3) 100%);
+  border-radius: var(--radius); padding: 2rem; margin-bottom: 1.25rem;
+  color: #fff; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  border-left: 4px solid var(--gold);
+}
+.hero-card::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(216,154,44,0.14), transparent 70%);
+}
+.hero-title { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 600; line-height: 1.3; margin-bottom: 6px; }
+.hero-sub { font-size: 13px; opacity: 0.7; margin-bottom: 1.25rem; max-width: 420px; }
+.hero-illus { font-size: 76px; opacity: 0.55; position: relative; z-index: 1; }
+.hero-stats { display: flex; gap: 1.5rem; }
+.hero-stat-val { font-size: 20px; font-weight: 600; color: var(--gold-pale); }
+.hero-stat-lbl { font-size: 11px; opacity: 0.6; }
+
+/* ── METRIC ── */
+.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+.metric-card { background: var(--card-bg); border-radius: var(--radius-md); padding: 1rem; border: 0.5px solid var(--border); }
+.metric-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 600; color: var(--text); }
+.metric-sub { font-size: 11px; margin-top: 3px; }
+.up { color: var(--paddy); }
+.down { color: var(--danger); }
+
+/* ── SECTION TITLE ── */
+.section-title { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 1rem; font-weight: 600; }
+
+/* ── WEATHER ── */
+.weather-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+.weather-day { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px 6px; text-align: center; }
+.weather-day.today { border-color: var(--gold); background: var(--gold-pale); }
+.weather-day-name { font-size: 10px; color: var(--muted); margin-bottom: 4px; font-weight: 600; letter-spacing: 0.3px; }
+.weather-icon { font-size: 22px; margin: 4px 0; }
+.weather-temp { font-size: 14px; font-weight: 600; color: var(--text); }
+.weather-rain { font-size: 10px; color: var(--sky); margin-top: 2px; }
+
+/* ── TWO COL / CARD ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+.card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+
+/* ── CROP LIST (misc) ── */
+.crop-list { display: flex; flex-direction: column; gap: 10px; }
+.crop-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius-md); border: 0.5px solid var(--border); background: var(--surface); }
+.crop-emoji { font-size: 28px; }
+.crop-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.crop-detail { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.crop-pct-wrap { margin-left: auto; text-align: right; }
+.crop-pct { font-size: 17px; font-weight: 700; color: var(--paddy); }
+.crop-bar-wrap { width: 80px; height: 4px; background: var(--paddy-pale); border-radius: 2px; margin-top: 4px; margin-left: auto; }
+.crop-bar { height: 100%; background: var(--paddy); border-radius: 2px; }
+
+/* ── SCHEME ── */
+.scheme-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+.scheme-item:last-child { border-bottom: none; }
+.scheme-icon-wrap { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--gold-pale); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.scheme-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.scheme-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.scheme-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--gold-pale); color: var(--gold-deep); font-weight: 600; }
+
+/* ── FORM ── */
+.form-wrap { max-width: 700px; margin: 0 auto; padding: 1.5rem; }
+.step-progress { display: flex; gap: 0; margin-bottom: 2rem; }
+.step-item { flex: 1; display: flex; align-items: center; }
+.step-circle {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+  border: 2px solid var(--border); background: var(--card-bg); color: #a39c8d;
+  transition: all 0.3s;
+}
+.step-circle.done { background: var(--paddy); border-color: var(--paddy); color: #fff; }
+.step-circle.active { border-color: var(--gold); color: var(--gold-deep); background: var(--gold-pale); }
+.step-line { flex: 1; height: 2px; background: var(--border); }
+.step-line.done { background: var(--paddy); }
+.step-label { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: center; }
+.step-outer { display: flex; flex-direction: column; align-items: center; }
+
+.form-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; }
+.form-step-title { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.form-step-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.form-input, .form-select {
+  padding: 10px 12px; border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; color: var(--text);
+  background: var(--card-bg); outline: none;
+  font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-full { grid-column: 1 / -1; }
+.goal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.goal-chip {
+  padding: 10px 12px; border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); cursor: pointer;
+  text-align: center; font-size: 13px; font-weight: 600;
+  color: var(--muted); transition: all 0.2s; background: var(--card-bg);
+}
+.goal-chip:hover { border-color: var(--gold); color: var(--gold-deep); background: var(--gold-pale); }
+.goal-chip.selected { border-color: var(--paddy); color: var(--paddy); background: var(--paddy-pale); }
+.goal-chip-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+.form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+
+/* ── AI PREDICTION ── */
+.ai-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; gap: 1rem; }
+.spinner { width: 46px; height: 46px; border: 3px solid var(--gold-pale); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loading-text { font-size: 14px; color: var(--muted); font-style: italic; }
+.ai-loading-sub { font-size: 12px; color: #a39c8d; }
+
+.pred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pred-card {
+  background: var(--card-bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+  transition: box-shadow 0.2s, transform 0.2s; position: relative; overflow: hidden;
+}
+.pred-card:hover { box-shadow: 0 8px 26px rgba(23,36,27,0.10); transform: translateY(-2px); }
+.pred-card.rank-1 { border-color: var(--gold); border-width: 1.5px; }
+.pred-card.rank-2 { border-color: #9e9e9e; border-width: 1.5px; }
+.pred-card.rank-3 { border-color: var(--clay); border-width: 1.5px; }
+.rank-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px; }
+.rank-badge.gold   { background: var(--gold-pale); color: var(--gold-deep); border: 1px solid var(--gold); }
+.rank-badge.silver { background: #f2f2f0; color: #606060; border: 1px solid #bdbdbd; }
+.rank-badge.bronze { background: var(--clay-pale); color: var(--clay); border: 1px solid var(--clay); }
+.rank-badge.plain  { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.pred-crop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.pred-crop-emoji { font-size: 40px; }
+.pred-crop-name { font-family: 'Fraunces', serif; font-size: 18px; color: var(--text); font-weight: 600; }
+.pred-crop-hindi { font-size: 13px; color: var(--paddy); font-weight: 600; margin-top: 1px; }
+.conf-bar-wrap { margin-bottom: 14px; }
+.conf-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+.conf-label span:first-child { color: var(--muted); }
+.conf-label span:last-child { font-weight: 700; }
+.conf-bar { height: 8px; background: var(--surface); border-radius: 4px; }
+.conf-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+.conf-fill.high   { background: linear-gradient(90deg, var(--paddy), #6fa85c); }
+.conf-fill.medium { background: linear-gradient(90deg, var(--gold-deep), var(--gold)); }
+.conf-fill.low    { background: linear-gradient(90deg, var(--danger), #d16a5b); }
+.pred-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.pred-stat { padding: 8px 10px; background: var(--surface); border-radius: var(--radius-sm); }
+.pred-stat-lbl { font-size: 10px; color: var(--muted); }
+.pred-stat-val { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 1px; }
+.risk-low { color: var(--paddy); }
+.risk-med { color: var(--gold-deep); }
+.risk-high { color: var(--danger); }
+.expand-btn {
+  width: 100%; padding: 8px; border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border); background: transparent;
+  font-size: 12px; color: var(--muted); cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.expand-panel { display: none; margin-top: 10px; padding: 10px; background: var(--surface); border-radius: var(--radius-sm); font-size: 12px; color: var(--muted); line-height: 1.6; }
+.expand-panel.open { display: block; }
+
+.ai-bar {
+  background: linear-gradient(135deg, var(--ink), var(--ink-2));
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; color: #fff;
+  border-left: 4px solid var(--gold);
+}
+.ai-bar-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+.page-section { display: none; }
+.page-section.visible { display: block; }
+
+/* ── API integration styles ── */
+.pred-reason { background: var(--paddy-pale); border-left: 3px solid var(--paddy); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 8px 12px; font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 10px; }
+.api-timestamp { font-size: 11px; color: rgba(255,255,255,0.55); margin-left: auto; white-space: nowrap; }
+.api-error-box { background: var(--danger-pale); border: 1.5px solid var(--danger); border-radius: var(--radius-md); padding: 1.25rem; color: var(--danger); font-size: 13px; grid-column: 1 / -1; text-align: center; }
+.api-error-box strong { display: block; font-size: 15px; margin-bottom: 6px; }
+.api-error-box ul { list-style: disc; padding-left: 1.25rem; text-align: left; margin-top: 6px; }
+.backend-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; }
+.status-dot.online { background: var(--gold); animation: pulse 1.5s infinite; }
+.status-dot.offline { background: var(--danger); }
+.model-info-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-size: 11px; color: rgba(255,255,255,0.65); }
+
+h2 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 25px; position: relative; padding-bottom: 12px; }
+h2::after { content: ''; position: absolute; left: 0; bottom: 0; width: 60px; height: 4px; background: var(--gold); border-radius: 20px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .pred-grid, .two-col, .metric-grid { grid-template-columns: 1fr; }
+  .weather-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr !important; }
+  .dash-layout { flex-direction: column; }
+  .sidebar { width: 100%; flex-direction: row; align-items: center; padding: 0.6rem 0.75rem; overflow-x: auto; }
+  .sidebar-logo { border-bottom: none; padding: 0 0.75rem 0 0; flex-shrink: 0; }
+  .sidebar-nav { flex: none; display: flex; padding: 0; gap: 2px; }
+  .nav-item { white-space: nowrap; padding: 8px 12px; }
+  .nav-item.active { border-right: none; border-bottom: 3px solid var(--gold); }
+  .sidebar-user { display: none; }
+  .hero-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .hero-illus { display: none; }
+  .weather-grid { grid-template-columns: repeat(3, 1fr); }
+}
+/* ── REAL-TIME MARKET PRICE DASHBOARD ── */
+.market-header-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem;
+}
+.market-status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 6px 14px;
+  border-radius: 20px;
+}
+.market-status-pill.live {
+  background: var(--paddy-pale); color: var(--paddy); border: 1px solid rgba(61,122,68,0.25);
+}
+.market-status-pill.fallback {
+  background: var(--gold-pale); color: var(--gold-deep); border: 1px solid rgba(216,154,44,0.3);
+}
+
+.market-filter-card {
+  background: var(--card-bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.25rem;
+}
+.market-filter-grid {
+  display: grid; grid-template-columns: 2fr 1.5fr 1.5fr auto;
+  gap: 12px; align-items: flex-end;
+}
+.market-filter-lbl {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--muted); margin-bottom: 5px;
+}
+
+.market-kpi-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 1.25rem;
+}
+.market-kpi-card {
+  background: var(--card-bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 1rem; text-align: center;
+}
+.market-kpi-val { font-size: 22px; font-weight: 700; color: var(--text); }
+.market-kpi-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.market-kpi-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.market-two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.25rem;
+}
+
+.market-chart-card {
+  background: var(--card-bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+}
+.market-chart-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem; flex-wrap: wrap; gap: 6px;
+}
+.market-chart-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; }
+.market-chart-sub { font-size: 11px; color: var(--muted); }
+
+.mandi-table-container {
+  max-height: 280px; overflow-y: auto; overflow-x: auto;
+  border-radius: var(--radius-sm); border: 0.5px solid var(--border);
+}
+.mandi-table {
+  width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;
+}
+.mandi-table th {
+  background: var(--surface); color: var(--text); font-weight: 700;
+  padding: 8px 10px; position: sticky; top: 0; z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+.mandi-table td {
+  padding: 8px 10px; border-bottom: 0.5px solid var(--border);
+  color: var(--text);
+}
+.mandi-table tr:hover { background: rgba(216,154,44,0.06); }
+.mandi-price-badge {
+  font-weight: 700; color: var(--paddy); background: var(--paddy-pale);
+  padding: 2px 7px; border-radius: 4px; display: inline-block;
+}
+
+.profit-calc-card {
+  background: linear-gradient(135deg, #FFFDF7 0%, #F5EEDB 100%);
+  border: 1.5px solid var(--gold); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1.5rem;
+}
+.profit-calc-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 10px;
+}
+.profit-calc-item {
+  background: rgba(255,255,255,0.7); border-radius: var(--radius-sm);
+  padding: 10px; text-align: center; border: 0.5px solid rgba(23,36,27,0.08);
+}
+
+@media (max-width: 900px) {
+  .market-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .market-two-col { grid-template-columns: 1fr; }
+  .market-filter-grid { grid-template-columns: 1fr 1fr; }
+  .profit-calc-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .market-kpi-grid { grid-template-columns: 1fr; }
+  .market-filter-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== AUTH SCREEN ===== -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">🌿</div>
+        <div>
+          <div class="auth-logo-title">AgriFusion</div>
+          <div class="auth-logo-sub">Smart Crop Advisor</div>
+        </div>
+      </div>
+
+      <div class="auth-intro">
+        <strong>ASEP2 Project Demo</strong><br>
+        Interactive demonstration featuring Dashboard, Farm Analysis, and AI Crop Prediction.
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+
+      <div id="login-form">
+        <div class="field-group">
+          <label class="field-label">Mobile / Email</label>
+          <input class="field-input" type="text"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Password</label>
+          <input class="field-input" type="password"/>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;color:#9a9384;">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+            <input type="checkbox" checked/> Remember me
+          </label>
+          <span style="color:var(--gold-deep);cursor:pointer;font-weight:600;">Forgot password?</span>
+        </div>
+        <button class="btn-primary" onclick="showDashboard()">Login to Dashboard →</button>
+        <div class="divider"><div class="divider-line"></div><div class="divider-text">or continue with</div><div class="divider-line"></div></div>
+        <button style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--card-bg);font-size:14px;cursor:pointer;color:var(--text);font-family:'DM Sans',sans-serif;">📱 Continue with OTP</button>
+      </div>
+
+      <div id="register-form" style="display:none;">
+        <div class="field-group">
+          <label class="field-label">Full Name</label>
+          <input class="field-input" type="text"/>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><label class="field-label">Mobile</label><input class="field-input" type="tel"/></div>
+          <div class="field-group"><label class="field-label">Email</label><input class="field-input" type="email"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><label class="field-label">State</label><input class="field-input" type="text"/></div>
+          <div class="field-group"><label class="field-label">District</label><input class="field-input" type="text"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><label class="field-label">Password</label><input class="field-input" type="password"/></div>
+          <div class="field-group"><label class="field-label">Confirm</label><input class="field-input" type="password"/></div>
+        </div>
+        <button class="btn-primary" onclick="showDashboard()">Create Account →</button>
+      </div>
+
+      <div class="auth-footer">Demo credentials pre-filled • <span onclick="showDashboard()">Skip to dashboard →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD SCREEN ===== -->
+<div class="screen" id="screen-dashboard">
+  <div class="dash-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><span>🌿</span> AgriFusion</div>
+      <div class="sidebar-nav">
+        <button class="nav-item active" onclick="showPage('overview')"><span class="nav-dot"></span> Overview</button>
+        <button class="nav-item" onclick="showPage('form')"><span class="nav-dot"></span> Farm Analysis</button>
+        <button class="nav-item" onclick="showPage('weather')"><span class="nav-dot"></span> Weather</button>
+        <button class="nav-item" onclick="showPage('ai')"><span class="nav-dot"></span> AI Prediction</button>
+        <button class="nav-item" onclick="showPage('market')"><span class="nav-dot"></span> Market Prices</button>
+        <button class="nav-item" onclick="showPage('schemes')"><span class="nav-dot"></span> Gov Schemes</button>
+      </div>
+      <div class="sidebar-user">
+        <div class="avatar">RP</div>
+        <div><div class="sidebar-user-name">Rajan Patil</div><div class="sidebar-user-role">Farmer, India</div></div>
+      </div>
+    </div>
+
+    <div class="dash-main">
+      <div class="dash-header">
+        <div class="dash-header-title" id="page-title">Dashboard Overview</div>
+        <div class="header-actions">
+          <div class="badge-pill">🌤 31°C · Nashik</div>
+          <button class="btn-sm filled" onclick="showPage('form')">+ New Analysis</button>
+        </div>
+      </div>
+
+      <!-- OVERVIEW PAGE -->
+      <div class="page-section visible dash-content" id="page-overview">
+        <div class="hero-card">
+          <div>
+            <div class="hero-title">AgriFusion<br>Grow Smart, Earn Smart</div>
+            <div class="hero-sub">Your farm intelligence platform — AI-powered crop recommendations for Indian farmers, backed by live weather and market data.</div>
+          </div>
+          <div class="hero-illus">🌾</div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <div class="section-title">7-Day Weather Forecast</div>
+          <div class="weather-grid">
+            <div class="weather-day today"><div class="weather-day-name">TODAY</div><div class="weather-icon">⛅</div><div class="weather-temp">31°C</div><div class="weather-rain">💧 40%</div></div>
+            <div class="weather-day"><div class="weather-day-name">TUE</div><div class="weather-icon">🌧</div><div class="weather-temp">27°C</div><div class="weather-rain">💧 80%</div></div>
+            <div class="weather-day"><div class="weather-day-name">WED</div><div class="weather-icon">🌧</div><div class="weather-temp">26°C</div><div class="weather-rain">💧 75%</div></div>
+            <div class="weather-day"><div class="weather-day-name">THU</div><div class="weather-icon">🌦</div><div class="weather-temp">29°C</div><div class="weather-rain">💧 50%</div></div>
+            <div class="weather-day"><div class="weather-day-name">FRI</div><div class="weather-icon">☀️</div><div class="weather-temp">33°C</div><div class="weather-rain">💧 10%</div></div>
+            <div class="weather-day"><div class="weather-day-name">SAT</div><div class="weather-icon">⛅</div><div class="weather-temp">32°C</div><div class="weather-rain">💧 25%</div></div>
+            <div class="weather-day"><div class="weather-day-name">SUN</div><div class="weather-icon">☀️</div><div class="weather-temp">34°C</div><div class="weather-rain">💧 5%</div></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card" style="grid-column: 1 / -1;">
+            <div class="section-title">Verified Government Portals</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+              <div class="scheme-item" style="border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-md); display:flex; align-items:center;">
+                <div class="scheme-icon-wrap" style="background:var(--sky-pale); color:var(--sky);">🌱</div>
+                <div style="flex:1">
+                  <div class="scheme-name">PM Kisan Samman Nidhi</div>
+                  <div class="scheme-detail">₹6,000/yr direct income support to all landholding farmer families.</div>
+                </div>
+                <a href="https://pmkisan.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none; padding:6px 12px; font-size:12px; margin-left:12px;">Official Portal ↗</a>
+              </div>
+              <div class="scheme-item" style="border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-md); display:flex; align-items:center;">
+                <div class="scheme-icon-wrap" style="background:var(--paddy-pale); color:var(--paddy);">💧</div>
+                <div style="flex:1">
+                  <div class="scheme-name">PM Krishi Sinchayee Yojana</div>
+                  <div class="scheme-detail">Subsidy up to 90% for setting up micro-irrigation (Drip/Sprinkler) systems.</div>
+                </div>
+                <a href="https://pmksy.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none; padding:6px 12px; font-size:12px; margin-left:12px;">Official Portal ↗</a>
+              </div>
+              <div class="scheme-item" style="border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-md); display:flex; align-items:center;">
+                <div class="scheme-icon-wrap" style="background:var(--gold-pale); color:var(--gold-deep);">🛡</div>
+                <div style="flex:1">
+                  <div class="scheme-name">PM Fasal Bima Yojana</div>
+                  <div class="scheme-detail">Robust crop insurance at a highly subsidized 2% premium for Kharif crops.</div>
+                </div>
+                <a href="https://pmfby.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none; padding:6px 12px; font-size:12px; margin-left:12px;">Official Portal ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM PAGE -->
+      <div class="page-section" id="page-form">
+        <div class="form-wrap">
+          <div id="step-progress" style="margin-bottom:2rem;"></div>
+          <div class="form-card" id="form-body"></div>
+          <div class="form-actions" id="form-actions"></div>
+        </div>
+      </div>
+
+      <!-- WEATHER PAGE -->
+      <div class="page-section dash-content" id="page-weather">
+        <div style="display:flex;gap:10px;margin-bottom:1.25rem;">
+          <div style="flex:1;position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">🔍</span>
+            <input id="weather-city-input" type="text" value=""
+              style="width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--card-bg);color:var(--text);outline:none;"
+              onkeydown="if(event.key==='Enter') fetchWeather()" />
+          </div>
+          <button onclick="fetchWeather()" style="padding:10px 18px;background:var(--ink);color:var(--gold-pale);border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Get Weather</button>
+        </div>
+
+        <div id="weather-hero-card" class="hero-card" style="margin-bottom:1.25rem;">
+          <div>
+            <div style="font-size:13px;opacity:0.65;margin-bottom:4px;" id="wh-location">Loading live weather…</div>
+            <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:600;" id="wh-temp">— °C</div>
+            <div style="font-size:14px;opacity:0.7;margin-top:4px;" id="wh-desc">—</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;text-align:center;">
+            <div><div style="font-size:20px;" id="wh-humidity">—</div><div style="font-size:11px;opacity:0.6;">Humidity</div></div>
+            <div><div style="font-size:20px;" id="wh-wind">—</div><div style="font-size:11px;opacity:0.6;">Wind</div></div>
+            <div><div style="font-size:20px;" id="wh-rain">—</div><div style="font-size:11px;opacity:0.6;">Rainfall (1h)</div></div>
+            <div><div style="font-size:20px;" id="wh-pressure">—</div><div style="font-size:11px;opacity:0.6;">Pressure hPa</div></div>
+          </div>
+        </div>
+
+        <div id="weather-autofill-bar" style="display:none;background:var(--card-bg);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:1.25rem;align-items:center;gap:10px;border:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--muted);flex:1;">🌡️ Use live weather data to auto-fill temperature &amp; humidity in the AI form?</span>
+          <button onclick="autoFillFromWeather()" style="padding:7px 14px;background:var(--ink);color:var(--gold-pale);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;">Auto-fill AI Form ↗</button>
+        </div>
+
+        <div class="section-title" style="margin-top:0.5rem;">7-Day Forecast</div>
+        <div class="weather-grid" id="forecast-grid">
+          <div class="weather-day today"><div class="weather-day-name">TODAY</div><div class="weather-icon">⛅</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">TUE</div><div class="weather-icon">🌧</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">WED</div><div class="weather-icon">🌧</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">THU</div><div class="weather-icon">🌦</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">FRI</div><div class="weather-icon">☀️</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">SAT</div><div class="weather-icon">⛅</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+          <div class="weather-day"><div class="weather-day-name">SUN</div><div class="weather-icon">☀️</div><div class="weather-temp">—</div><div class="weather-rain">💧 —</div></div>
+        </div>
+
+        <div class="card" style="margin-top:1.25rem;">
+          <div class="section-title">🌾 Live Farming Advisory</div>
+          <div style="display:flex;flex-direction:column;gap:10px;" id="farming-advisories">
+            <div style="padding:10px;background:var(--surface);border-radius:var(--radius-sm);border-left:3px solid var(--paddy);font-size:13px;color:var(--muted);">
+              Search for your city above to get live farming advisories based on real weather.
+            </div>
+          </div>
+        </div>
+
+        <div id="weather-error-box" style="display:none;margin-top:1rem;"></div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:1rem;" id="weather-last-updated"></div>
+      </div>
+
+      <!-- AI PAGE -->
+      <div class="page-section dash-content" id="page-ai">
+        <div class="ai-bar" id="ai-status-bar">
+          <div class="ai-bar-pulse"></div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:600;">AI Prediction Engine Active</div>
+            <div class="model-info-row" id="model-info-row"><span>Loading model info...</span></div>
+          </div>
+          <div class="backend-status" id="backend-status">
+            <div class="status-dot" id="status-dot"></div>
+            <span id="status-text">Checking...</span>
+          </div>
+          <span class="api-timestamp" id="api-timestamp"></span>
+        </div>
+
+        <div class="section-title">Recommended Crops — Ranked by Suitability</div>
+        <div class="pred-grid" id="pred-container"></div>
+
+        <div id="why-not-section" style="display:none;margin-top:1.5rem;">
+          <div class="section-title" style="color:var(--muted);">⚠️ Not Suitable for Your Conditions</div>
+          <div id="why-not-container" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <div class="card" style="margin-top:1.25rem;" id="ai-summary-card">
+          <div class="section-title">📋 AI Agricultural Advisory Report</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;" id="ai-summary-text">
+            Run a farm analysis to get your personalized crop recommendations.
+          </div>
+          <button class="btn-sm filled" style="margin-top:1rem;" onclick="showPage('form')">+ Run New Analysis</button>
+        </div>
+
+        <div class="card" style="margin-top:1.25rem;">
+          <div class="section-title">🤖 Model Performance Dashboard</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="model-dashboard">
+            <div style="padding:12px;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:var(--paddy);" id="dash-test-acc">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Test Accuracy</div>
+            </div>
+            <div style="padding:12px;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:var(--gold-deep);" id="dash-cv-acc">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">CV Accuracy (5-fold)</div>
+            </div>
+            <div style="padding:12px;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:var(--text);" id="dash-classes">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Crop Classes</div>
+            </div>
+            <div style="padding:12px;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:var(--text);" id="dash-dataset">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Training Samples</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--surface);border-radius:var(--radius-md);font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text);">Algorithm:</strong> <span id="dash-model-name">Random Forest (Calibrated)</span>
+            &nbsp;·&nbsp; <strong style="color:var(--text);">Calibration:</strong> Isotonic Regression (5-fold)
+            &nbsp;·&nbsp; <strong style="color:var(--text);">Split:</strong> 80/20 Stratified Train/Test
+            &nbsp;·&nbsp; <strong style="color:var(--text);">Last Prediction:</strong> <span id="dash-timestamp">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- REAL-TIME MARKET PRICE DASHBOARD PAGE -->
+      <div class="page-section dash-content" id="page-market">
+        
+        <!-- Header / Banner -->
+        <div class="market-header-bar">
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:700; color:var(--ink);">
+              📊 Real-Time Mandi Market Prices
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-top:2px;">
+              Live mandi rates from Agmarknet (data.gov.in) coupled with 8-week predictive time-series trends.
+            </div>
+          </div>
+          <div id="market-source-pill" class="market-status-pill live">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:currentColor;"></span>
+            <span id="market-source-text">Connecting to Live Mandis...</span>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="market-filter-card">
+          <div class="market-filter-grid">
+            <div>
+              <div class="market-filter-lbl">Crop Commodity</div>
+              <select id="market-crop-select" class="form-select" onchange="fetchMarketData()">
+                <option value="rice" selected>🌾 Rice (धान)</option>
+                <option value="maize">🌽 Maize (मक्का)</option>
+                <option value="chickpea">🧆 Chickpea / Chana (चना)</option>
+                <option value="kidneybeans">🫘 Kidney Beans / Rajma (राजमा)</option>
+                <option value="pigeonpeas">🍲 Pigeonpeas / Arhar (अरहर)</option>
+                <option value="mungbean">🌱 Mungbean / Moong (मूंग)</option>
+                <option value="blackgram">🥣 Blackgram / Urad (उड़द)</option>
+                <option value="lentil">🍲 Lentil / Masur (मसूर)</option>
+                <option value="mothbeans">🫘 Mothbeans (मोठ)</option>
+                <option value="cotton">🌿 Cotton (कपास)</option>
+                <option value="jute">🌿 Jute (जूट)</option>
+                <option value="coffee">☕ Coffee (कॉफी)</option>
+                <option value="banana">🍌 Banana (केला)</option>
+                <option value="mango">🥭 Mango (आम)</option>
+                <option value="grapes">🍇 Grapes (अंगूर)</option>
+                <option value="apple">🍎 Apple (सेब)</option>
+                <option value="orange">🍊 Orange (संतरा)</option>
+                <option value="papaya">🍈 Papaya (पपीता)</option>
+                <option value="pomegranate">🍎 Pomegranate (अनार)</option>
+                <option value="watermelon">🍉 Watermelon (तरबूज)</option>
+                <option value="muskmelon">🍈 Muskmelon (खरबूजा)</option>
+                <option value="coconut">🥥 Coconut (नारियल)</option>
+              </select>
+            </div>
+            <div>
+              <div class="market-filter-lbl">State</div>
+              <select id="market-state-select" class="form-select" onchange="fetchMarketData()">
+                <option value="All">All India</option>
+                <option value="Maharashtra" selected>Maharashtra</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Telangana">Telangana</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Bihar">Bihar</option>
+              </select>
+            </div>
+            <div>
+              <div class="market-filter-lbl">District (Optional)</div>
+              <input type="text" id="market-district-input" class="form-input" placeholder="e.g. Nashik, Pune..." onkeydown="if(event.key==='Enter') fetchMarketData()" />
+            </div>
+            <div>
+              <button class="btn-sm filled" style="padding:10px 18px; border-radius:var(--radius-sm);" onclick="fetchMarketData()">
+                🔄 Fetch Live
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="market-kpi-grid">
+          <div class="market-kpi-card">
+            <div class="market-kpi-val" id="kpi-avg-modal">₹—</div>
+            <div class="market-kpi-lbl">Avg. Modal Price</div>
+            <div class="market-kpi-sub">Across reporting mandis (₹/qtl)</div>
+          </div>
+          <div class="market-kpi-card">
+            <div class="market-kpi-val" id="kpi-highest-mandi" style="font-size:17px; line-height:1.3; margin-top:3px;">—</div>
+            <div class="market-kpi-lbl">Highest Modal Mandi</div>
+            <div class="market-kpi-sub" id="kpi-highest-price">₹— / qtl</div>
+          </div>
+          <div class="market-kpi-card">
+            <div class="market-kpi-val" id="kpi-reporting-count">—</div>
+            <div class="market-kpi-lbl">Mandis Reporting</div>
+            <div class="market-kpi-sub" id="kpi-price-spread">Spread: ₹—</div>
+          </div>
+          <div class="market-kpi-card">
+            <div class="market-kpi-val" id="kpi-trend-val">—</div>
+            <div class="market-kpi-lbl">8-Week Forecast Outlook</div>
+            <div class="market-kpi-sub" id="kpi-trend-change">—</div>
+          </div>
+        </div>
+
+        <!-- Live Mandi Table & Forecast Chart Side-by-Side -->
+        <div class="market-two-col">
+          
+          <!-- Live Mandi Table -->
+          <div class="market-chart-card">
+            <div class="market-chart-header">
+              <div>
+                <div class="market-chart-title">📍 Live Mandi Arrivals & Prices</div>
+                <div class="market-chart-sub" id="mandi-table-subtitle">Real-time daily quotes from reporting markets</div>
+              </div>
+              <span id="mandi-arrival-date" class="badge-pill">Today</span>
+            </div>
+            <div class="mandi-table-container">
+              <table class="mandi-table">
+                <thead>
+                  <tr>
+                    <th>Market (Mandi)</th>
+                    <th>District</th>
+                    <th>Min Price</th>
+                    <th>Max Price</th>
+                    <th>Modal Price</th>
+                  </tr>
+                </thead>
+                <tbody id="mandi-table-body">
+                  <tr>
+                    <td colspan="5" style="text-align:center; padding:2rem; color:var(--muted);">Loading live mandi data...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Forecast Chart -->
+          <div class="market-chart-card">
+            <div class="market-chart-header">
+              <div>
+                <div class="market-chart-title" id="forecast-chart-title">📈 8-Week Price Trend Forecast</div>
+                <div class="market-chart-sub">SARIMAX projection with 95% confidence intervals</div>
+              </div>
+            </div>
+            <div style="position:relative; height:240px; width:100%;">
+              <canvas id="marketForecastChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Profitability Calculator Card -->
+        <div class="profit-calc-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div style="font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--ink);">
+                💰 Farm Economic Calculator (Per Hectare)
+              </div>
+              <div style="font-size:12px; color:var(--muted);">
+                Calculated dynamically using ICAR benchmark yields and latest modal market rates.
+              </div>
+            </div>
+            <span class="badge-pill" style="background:var(--ink); color:var(--gold-pale);">ICAR / CACP Benchmark</span>
+          </div>
+
+          <div class="profit-calc-grid">
+            <div class="profit-calc-item">
+              <div style="font-size:11px; color:var(--muted);">Estimated Yield</div>
+              <div style="font-size:17px; font-weight:700; color:var(--text); margin-top:3px;" id="econ-yield">— qtl/ha</div>
+            </div>
+            <div class="profit-calc-item">
+              <div style="font-size:11px; color:var(--muted);">Avg. Input Cost</div>
+              <div style="font-size:17px; font-weight:700; color:var(--danger); margin-top:3px;" id="econ-cost">₹—</div>
+            </div>
+            <div class="profit-calc-item">
+              <div style="font-size:11px; color:var(--muted);">Expected Revenue</div>
+              <div style="font-size:17px; font-weight:700; color:var(--sky); margin-top:3px;" id="econ-revenue">₹—</div>
+            </div>
+            <div class="profit-calc-item" style="background:var(--paddy-pale); border-color:var(--paddy);">
+              <div style="font-size:11px; color:var(--paddy); font-weight:700;">Net Estimated Profit</div>
+              <div style="font-size:19px; font-weight:800; color:var(--paddy); margin-top:3px;" id="econ-profit">₹—</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCHEMES PAGE -->
+
+
+      <div class="page-section dash-content" id="page-schemes">
+        <div class="section-title">Government Agricultural Schemes</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="card" style="display:flex;gap:1.25rem;align-items:flex-start; border:1px solid var(--border);">
+            <div style="width:48px;height:48px;background:var(--sky-pale);color:var(--sky);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🌱</div>
+            <div style="flex:1">
+              <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">PM Kisan Samman Nidhi</div>
+              <div style="font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.5;">₹6,000 per year direct benefit transfer to farmer bank accounts in 3 equal installments of ₹2,000 each.</div>
+              <div style="background:var(--surface); padding:12px; border-radius:var(--radius-sm); margin-bottom:12px;">
+                <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px;">Eligibility Criteria:</div>
+                <div style="font-size:13px; color:var(--muted); line-height:1.5;">Open to all landholding farmer families with cultivable land in their names. <strong>Excludes:</strong> Institutional land holders, income tax payers in the last assessment year, and registered professionals (doctors, engineers, etc).</div>
+              </div>
+              <div style="display:flex;gap:8px; align-items:center;">
+                <span class="badge-pill">₹6,000/yr Support</span>
+                <a href="https://pmkisan.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none;">Official Portal ↗</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;gap:1.25rem;align-items:flex-start; border:1px solid var(--border);">
+            <div style="width:48px;height:48px;background:var(--paddy-pale);color:var(--paddy);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">💧</div>
+            <div style="flex:1">
+              <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">PM Krishi Sinchayee Yojana (PMKSY)</div>
+              <div style="font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Provides subsidies up to 90% for setting up micro-irrigation systems (Drip/Sprinkler) to promote water conservation.</div>
+              <div style="background:var(--surface); padding:12px; border-radius:var(--radius-sm); margin-bottom:12px;">
+                <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px;">Eligibility Criteria:</div>
+                <div style="font-size:13px; color:var(--muted); line-height:1.5;">All farmers who own agricultural land and have access to a water source are eligible. High priority and maximum subsidy is given to small/marginal farmers and farmers belonging to SC/ST categories.</div>
+              </div>
+              <div style="display:flex;gap:8px; align-items:center;">
+                <span class="badge-pill">Up to 90% Subsidy</span>
+                <a href="https://pmksy.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none;">Official Portal ↗</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;gap:1.25rem;align-items:flex-start; border:1px solid var(--border);">
+            <div style="width:48px;height:48px;background:var(--gold-pale);color:var(--gold-deep);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🛡</div>
+            <div style="flex:1">
+              <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">Pradhan Mantri Fasal Bima Yojana (PMFBY)</div>
+              <div style="font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Robust crop insurance scheme that protects farmers against drought, flood, and pest damage at heavily subsidized premiums.</div>
+              <div style="background:var(--surface); padding:12px; border-radius:var(--radius-sm); margin-bottom:12px;">
+                <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px;">Eligibility Criteria:</div>
+                <div style="font-size:13px; color:var(--muted); line-height:1.5;">Available for all farmers growing notified crops in notified areas. Loanee farmers (those taking crop loans) are enrolled automatically by banks, while non-loanee farmers can opt-in voluntarily.</div>
+              </div>
+              <div style="display:flex;gap:8px; align-items:center;">
+                <span class="badge-pill">2% Premium for Kharif</span>
+                <a href="https://pmfby.gov.in/" target="_blank" class="btn-sm filled" style="text-decoration:none;">Official Portal ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab==='register' ? 'block' : 'none';
+}
+
+function showDashboard() {
+  document.getElementById('screen-auth').classList.remove('active');
+  document.getElementById('screen-dashboard').classList.add('active');
+  initChart();
+}
+
+function showPage(p) {
+  document.querySelectorAll('.page-section').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('visible');
+  const titles = {overview:'Dashboard Overview',form:'Farm Analysis Form',weather:'Live Weather & Advisory',ai:'AI Crop Prediction',market:'Real-Time Market Prices',schemes:'Government Schemes'};
+  document.getElementById('page-title').textContent = titles[p]||'Dashboard';
+  const items = document.querySelectorAll('.nav-item');
+  const idx = {overview:0,form:1,weather:2,ai:3,market:4,schemes:5};
+  if(idx[p]!==undefined) items[idx[p]].classList.add('active');
+  if(p==='form') initForm();
+  if(p==='ai') checkBackendStatus();
+  if(p==='weather') onWeatherPageShow();
+  if(p==='market') onMarketPageShow();
+}
+
+// ---- FORM ----
+let currentStep = 1;
+const totalSteps = 4;
+const stepData = [
+  { title:'Soil & Resources',  sub:'Enter soil test values and your water/irrigation setup.' },
+  { title:'Climate & Season',  sub:'Current climate conditions and the growing season you are planning for.' },
+  { title:'Farm Background',   sub:'Your farming history, practices, and pest situation.' },
+  { title:'Your Goals',        sub:'What matters most? Your goals will influence the final ranking.' },
+];
+const stepForms = [
+  `<div class="form-grid">
+    <div class="form-field"><label class="form-label">Nitrogen N (kg/ha) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-N" type="number" min="0" max="140"/></div>
+    <div class="form-field"><label class="form-label">Phosphorus P (kg/ha) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-P" type="number" min="0" max="145"/></div>
+    <div class="form-field"><label class="form-label">Potassium K (kg/ha) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-K" type="number" min="0" max="205"/></div>
+    <div class="form-field"><label class="form-label">Soil pH <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-ph" type="number" step="0.1" min="3" max="10"/></div>
+    <div class="form-field"><label class="form-label">Water Availability <span style="color:var(--sky);font-size:10px;">⚙ Rules Engine</span></label>
+      <select class="form-select" id="inp-water"><option>Good</option><option>Moderate</option><option>Scarce</option></select></div>
+    <div class="form-field"><label class="form-label">Irrigation Type <span style="color:var(--sky);font-size:10px;">⚙ Rules Engine</span></label>
+      <select class="form-select" id="inp-irrigation"><option>Flood</option><option>Drip</option><option>Sprinkler</option><option>Rainfed</option></select></div>
+  </div>
+  <div style="margin-top:10px;padding:8px 12px;background:var(--paddy-pale);border-radius:var(--radius-sm);font-size:11px;color:var(--ink-2);">
+    💡 <strong>★ ML Input</strong> = fed directly to Random Forest model &nbsp;·&nbsp; <span style="color:var(--sky);"><strong>⚙ Rules Engine</strong></span> = used to adjust scores after ML prediction
+  </div>`,
+
+  `<div class="form-grid">
+    <div class="form-field form-full">
+      <label class="form-label">Farm Location (City) <span style="color:var(--sky);font-size:10px;">🌤 Live OpenWeatherMap API</span></label>
+      <div style="display:flex;gap:8px;">
+        <input class="form-input" id="inp-city" type="text" style="flex:1"/>
+        <button type="button" class="btn-sm filled" onclick="autoFillWeather()" id="btn-autofill" style="white-space:nowrap;">Fetch Live Data</button>
+      </div>
+    </div>
+    <div class="form-field form-full"><label class="form-label">Growing Season <span style="color:var(--sky);font-size:10px;">⚙ Rules Engine — filters off-season crops</span></label>
+      <select class="form-select" id="inp-season">
+        <option>Kharif (Jun-Oct)</option><option>Rabi (Nov-Apr)</option><option>Zaid (Apr-Jun)</option>
+      </select></div>
+    <div class="form-field"><label class="form-label">Temperature (°C) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-temperature" type="number" min="0" max="50"/></div>
+    <div class="form-field"><label class="form-label">Humidity (%) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input</span></label>
+      <input class="form-input" id="inp-humidity" type="number" min="0" max="100"/></div>
+    <div class="form-field"><label class="form-label">Annual Rainfall (mm) <span style="color:var(--gold-deep);font-size:10px;">★ ML Input (Manual entry required)</span></label>
+      <input class="form-input" id="inp-rainfall" type="number" min="0" max="500"/></div>
+  </div>
+  <div style="margin-top:10px;padding:8px 12px;background:var(--paddy-pale);border-radius:var(--radius-sm);font-size:11px;color:var(--ink-2);">
+    🌤 You can use the <strong>Weather tab</strong> to auto-fill Temperature &amp; Humidity from live data.
+  </div>`,
+
+  `<div class="form-grid">
+    <div class="form-field"><label class="form-label">Last Crop Grown <span style="color:var(--sky);font-size:10px;">⚙ Crop Rotation Rules</span></label>
+      <select class="form-select" id="inp-last-crop">
+        <option value="">None / First crop</option>
+        <option>Cotton</option><option>Rice</option><option>Maize</option>
+        <option>Wheat</option><option>Soybean</option><option>Onion</option>
+        <option>Chickpea</option><option>Lentil</option><option>Mungbean</option>
+      </select></div>
+    <div class="form-field"><label class="form-label">Pest Pressure <span style="color:var(--sky);font-size:10px;">⚙ Pest Tolerance Rules</span></label>
+      <select class="form-select" id="inp-pest">
+        <option>None</option><option>Mild</option><option>Moderate</option><option>Severe</option>
+      </select></div>
+    <div class="form-field form-full"><label class="form-label">Farming Preference <span style="color:var(--sky);font-size:10px;">⚙ Organic vs Chemical Rules</span></label>
+      <select class="form-select" id="inp-farming-pref">
+        <option>Chemical</option><option>Organic</option><option>Mixed</option>
+      </select></div>
+  </div>
+  <div style="margin-top:10px;padding:8px 12px;background:var(--sky-pale);border-radius:var(--radius-sm);font-size:11px;color:var(--sky);">
+    ⚙ All fields on this step feed the <strong>Rules Engine</strong> — they adjust the ML scores based on your real farm situation.
+  </div>`,
+
+  `<div>
+    <div style="margin-bottom:12px;font-size:12px;color:var(--sky);padding:8px 12px;background:var(--sky-pale);border-radius:var(--radius-sm);">
+      ⚙ <strong>Goal selection directly boosts or penalizes crops</strong> in the ranking. Select all that apply.
+    </div>
+    <div class="goal-grid" id="goal-chips">
+      <div class="goal-chip selected" onclick="toggleGoal(this)"><span class="goal-chip-icon">💰</span>Maximum Profit</div>
+      <div class="goal-chip" onclick="toggleGoal(this)"><span class="goal-chip-icon">⚡</span>Fast Growing</div>
+      <div class="goal-chip" onclick="toggleGoal(this)"><span class="goal-chip-icon">💧</span>Low Water Use</div>
+      <div class="goal-chip" onclick="toggleGoal(this)"><span class="goal-chip-icon">🌍</span>Export Quality</div>
+      <div class="goal-chip" onclick="toggleGoal(this)"><span class="goal-chip-icon">🌿</span>Sustainable</div>
+      <div class="goal-chip" onclick="toggleGoal(this)"><span class="goal-chip-icon">🛡</span>Low Risk</div>
+    </div>
+  </div>`
+];
+
+function toggleGoal(el) { el.classList.toggle('selected'); }
+
+function initForm() { currentStep = 1; renderFormStep(); }
+
+let isFormInitialized = false;
+const _stepLabels = ['Soil & Resources','Climate & Season','Farm Background','Goals'];
+
+function renderFormStep() {
+  const prog = document.getElementById('step-progress');
+  let html = '<div class="step-progress">';
+  for(let i=1;i<=totalSteps;i++) {
+    html += `<div class="step-outer"><div class="step-circle ${i<currentStep?'done':i===currentStep?'active':''}">${i<currentStep?'✓':i}</div></div>`;
+    if(i<totalSteps) html += `<div class="step-line ${i<currentStep?'done':''}"></div>`;
+  }
+  html += '</div>';
+  html += '<div style="display:flex;justify-content:center;gap:0;margin-top:6px;margin-bottom:1.5rem;">';
+  for(let i=1;i<=totalSteps;i++) {
+    html += `<div style="flex:1;text-align:center;font-size:10px;color:${i===currentStep?'var(--gold-deep)':'var(--muted)'};">${_stepLabels[i-1]}</div>`;
+    if(i<totalSteps) html += '<div style="flex:1;"></div>';
+  }
+  html += '</div>';
+  prog.innerHTML = html;
+
+  const body = document.getElementById('form-body');
+  if (!isFormInitialized) {
+    let fullHtml = '';
+    for(let i=0; i<totalSteps; i++) {
+      fullHtml += `<div id="step-content-${i+1}" style="display:none;">
+                     <div class="form-step-title">${stepData[i].title}</div>
+                     <div class="form-step-sub">${stepData[i].sub}</div>
+                     ${stepForms[i]}
+                   </div>`;
+    }
+    body.innerHTML = fullHtml;
+    isFormInitialized = true;
+  }
+
+  for(let i=1; i<=totalSteps; i++) {
+    const stepEl = document.getElementById(`step-content-${i}`);
+    if (stepEl) stepEl.style.display = (i === currentStep) ? 'block' : 'none';
+  }
+
+  const actions = document.getElementById('form-actions');
+  actions.innerHTML = `
+    <button class="btn-sm" onclick="formPrev()" ${currentStep===1?'style="visibility:hidden"':''}>← Back</button>
+    <div style="font-size:12px;color:var(--muted);">Step ${currentStep} of ${totalSteps}</div>
+    ${currentStep<totalSteps
+      ? `<button class="btn-sm filled" onclick="formNext()">Continue →</button>`
+      : `<button class="btn-sm filled" onclick="runAI()">🤖 Run AI Analysis →</button>`}
+  `;
+}
+
+function formNext() { if(currentStep<totalSteps){ currentStep++; renderFormStep(); } }
+function formPrev() { if(currentStep>1){ currentStep--; renderFormStep(); } }
+
+// ════════════════════════════════════════════════════════════
+// WEATHER API INTEGRATION — OpenWeatherMap via Flask proxy
+// ════════════════════════════════════════════════════════════
+const API_BASE = 'http://localhost:5000';
+
+async function autoFillWeather() {
+  const city = document.getElementById('inp-city').value.trim();
+  const btn = document.getElementById('btn-autofill');
+  if (!city) { alert("Please enter a city name first!"); return; }
+
+  btn.innerText = "Fetching...";
+  try {
+    const res = await fetch(`http://127.0.0.1:5000/weather?city=${city}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    document.getElementById('inp-temperature').value = data.average_7_day.temp;
+    document.getElementById('inp-humidity').value = data.average_7_day.humidity;
+
+    btn.innerText = "✓ Auto-filled";
+    btn.style.background = "var(--paddy)";
+    btn.style.borderColor = "var(--paddy)";
+    setTimeout(() => {
+      btn.innerText = "Fetch Live Data";
+      btn.style.background = "";
+      btn.style.borderColor = "";
+    }, 3000);
+  } catch (err) {
+    btn.innerText = "❌ Failed";
+    alert("Could not fetch weather. " + err.message);
+    setTimeout(() => { btn.innerText = "Fetch Live Data"; }, 2000);
+  }
+}
+
+let _lastWeather = null;
+
+async function fetchWeather() {
+  const cityInput = document.getElementById('weather-city-input');
+  const city = (cityInput ? cityInput.value : '').trim();
+  if (!city) { cityInput.focus(); return; }
+
+  document.getElementById('wh-location').textContent = `Fetching weather for ${city}…`;
+  document.getElementById('wh-temp').textContent      = '⏳';
+  document.getElementById('wh-desc').textContent      = 'Please wait…';
+  ['wh-humidity','wh-wind','wh-rain','wh-pressure'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '…';
+  });
+  document.getElementById('weather-autofill-bar').style.display = 'none';
+  document.getElementById('weather-error-box').style.display = 'none';
+  document.getElementById('weather-last-updated').textContent = '';
+
+  try {
+    const res  = await fetch(`${API_BASE}/weather?city=${encodeURIComponent(city)}`);
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      const errBox = document.getElementById('weather-error-box');
+      errBox.style.display = 'block';
+
+      if (res.status === 503 || data.api_key_configured === false) {
+        errBox.innerHTML = `
+          <div style="background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:var(--radius-md);padding:16px;">
+            <div style="font-weight:700;font-size:14px;color:var(--gold-deep);margin-bottom:8px;">🔑 OpenWeatherMap API Key Not Set</div>
+            <div style="font-size:13px;color:var(--ink-2);line-height:1.7;">
+              To get live weather, add your free API key:<br>
+              <ol style="margin:8px 0 0 16px;padding:0;">
+                <li>Go to <strong>openweathermap.org/api</strong> → Sign Up (free)</li>
+                <li>Go to your Profile → <strong>API Keys</strong> tab</li>
+                <li>Copy your key</li>
+                <li>Open <strong>backend/app.py</strong> → find <code>OWM_API_KEY</code></li>
+                <li>Replace <code>"YOUR_API_KEY_HERE"</code> with your key</li>
+                <li>Restart the Flask server</li>
+              </ol>
+              <div style="margin-top:10px;padding:8px 12px;background:var(--card-bg);border-radius:6px;font-size:12px;font-family:monospace;">
+                OWM_API_KEY = "paste_your_key_here"
+              </div>
+              <div style="margin-top:8px;font-size:12px;color:var(--muted);">⏱ Note: New keys activate within 2 hours of account creation.</div>
+            </div>
+          </div>`;
+      } else if (res.status === 401) {
+        errBox.innerHTML = `
+          <div style="background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:var(--radius-md);padding:16px;">
+            <div style="font-weight:700;font-size:14px;color:var(--gold-deep);margin-bottom:6px;">⏳ API Key Is Activating — Please Wait</div>
+            <div style="font-size:13px;color:var(--ink-2);line-height:1.8;">
+              Your key <code style="background:var(--card-bg);padding:1px 5px;border-radius:4px;">4621bc3408...5319c8</code> is saved correctly.<br>
+              OpenWeatherMap takes <strong>up to 2 hours</strong> to activate new account keys.<br><br>
+              ✅ <strong>What to do:</strong><br>
+              &nbsp;&nbsp;• Wait 1–2 hours, then click <strong>"Get Weather"</strong> again<br>
+              &nbsp;&nbsp;• Make sure you verified your email on openweathermap.org<br>
+              &nbsp;&nbsp;• The ML prediction (/predict) still works perfectly right now
+            </div>
+          </div>`;
+      } else if (res.status === 404) {
+        errBox.innerHTML = `
+          <div style="background:var(--danger-pale);border:1.5px solid var(--danger);border-radius:var(--radius-md);padding:14px;font-size:13px;color:var(--danger);">
+            <strong>❌ City not found:</strong> "${city}"<br>
+            <span style="color:var(--ink-2);">Try: <em>Nashik</em>, <em>Pune</em>, <em>Nagpur</em>, <em>Mumbai</em>, <em>New Delhi</em></span>
+          </div>`;
+      } else {
+        errBox.innerHTML = `
+          <div style="background:var(--danger-pale);border:1.5px solid var(--danger);border-radius:var(--radius-md);padding:14px;font-size:13px;color:var(--danger);">
+            <strong>⚠ ${data.error || 'Weather fetch failed'}</strong>
+          </div>`;
+      }
+
+      document.getElementById('wh-location').textContent = 'Weather unavailable';
+      document.getElementById('wh-temp').textContent     = '—';
+      document.getElementById('wh-desc').textContent     = 'Check API key setup above';
+      return;
+    }
+
+    _lastWeather = data;
+    const c = data.current;
+    document.getElementById('wh-location').textContent = `Live Weather · ${data.city}, ${data.country}  (${data.lat}°N, ${Math.abs(data.lon)}°E)`;
+    document.getElementById('wh-temp').textContent     = `${c.temp}°C ${c.emoji}`;
+    document.getElementById('wh-desc').textContent     = `${c.description} · Feels like ${c.feels_like}°C`;
+    document.getElementById('wh-humidity').textContent = `${c.humidity}%`;
+    document.getElementById('wh-wind').textContent     = `${c.wind_kph} km/h ${c.wind_dir}`;
+    document.getElementById('wh-rain').textContent     = `${c.rain_mm} mm`;
+    document.getElementById('wh-pressure').textContent = `${c.pressure}`;
+
+    const grid = document.getElementById('forecast-grid');
+    if (data.forecast && data.forecast.length > 0) {
+      grid.innerHTML = data.forecast.map((d, i) => `
+        <div class="weather-day ${i === 0 ? 'today' : ''}">
+          <div class="weather-day-name">${i === 0 ? 'TODAY' : d.day}</div>
+          <div style="font-size:10px;opacity:0.6;margin-bottom:2px;">${d.date}</div>
+          <div class="weather-icon">${d.emoji}</div>
+          <div class="weather-temp">${d.temp_max}°/${d.temp_min}°</div>
+          <div class="weather-rain">💧 ${d.pop}%
+            ${d.rain_mm > 0 ? `<span style="font-size:9px;opacity:0.7;">(${d.rain_mm}mm)</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const advBox = document.getElementById('farming-advisories');
+    if (data.advisories && data.advisories.length > 0) {
+      advBox.innerHTML = data.advisories.map(a => `
+        <div style="padding:10px 12px;background:var(--surface);border-radius:var(--radius-sm);border-left:3px solid ${a.border};font-size:13px;">
+          <strong style="color:${a.color};">${a.icon} ${a.title}</strong><br>
+          <span style="color:var(--muted);">${a.message}</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('weather-autofill-bar').style.display = 'flex';
+    const ft = new Date(data.fetched_at).toLocaleString('en-IN');
+    document.getElementById('weather-last-updated').textContent = `🕐 Last updated: ${ft} · Source: OpenWeatherMap`;
+
+  } catch (err) {
+    const errBox = document.getElementById('weather-error-box');
+    errBox.style.display = 'block';
+    errBox.innerHTML = `
+      <div style="background:var(--danger-pale);border:1.5px solid var(--danger);border-radius:var(--radius-md);padding:14px;font-size:13px;color:var(--danger);">
+        <strong>🔴 Cannot reach backend</strong><br>
+        Make sure Flask is running: <code>python app.py</code><br>
+        Error: ${err.message}
+      </div>`;
+    document.getElementById('wh-location').textContent = 'Backend offline';
+    document.getElementById('wh-temp').textContent     = '—';
+    document.getElementById('wh-desc').textContent     = 'Start the Flask server and try again';
+  }
+}
+
+function autoFillFromWeather() {
+  if (!_lastWeather || !_lastWeather.current) return;
+  const c = _lastWeather.current;
+  window._weatherPrefill = { temperature: c.temp, humidity: c.humidity, rainfall: c.rain_mm };
+
+  currentStep = 3;
+  renderFormStep();
+  showPage('form');
+
+  setTimeout(() => {
+    const tempEl = document.getElementById('inp-temperature');
+    const humEl  = document.getElementById('inp-humidity');
+    const rainEl = document.getElementById('inp-rainfall');
+    if (tempEl) tempEl.value = c.temp;
+    if (humEl)  humEl.value  = c.humidity;
+    if (rainEl && c.rain_mm > 0) rainEl.value = c.rain_mm;
+
+    [tempEl, humEl, rainEl].forEach(el => {
+      if (!el) return;
+      el.style.transition = 'background 0.4s';
+      el.style.background = '#F8E9C9';
+      setTimeout(() => el.style.background = '', 1200);
+    });
+  }, 200);
+}
+
+function onWeatherPageShow() {
+  const city = (document.getElementById('weather-city-input') || {}).value;
+  if (!_lastWeather && city) fetchWeather();
+}
+
+// ════════════════════════════════════════════════════════════
+//  SMART CROP ADVISOR — Frontend API Integration
+// ════════════════════════════════════════════════════════════
+async function checkBackendStatus() {
+  const dot     = document.getElementById('status-dot');
+  const text    = document.getElementById('status-text');
+  const infoRow = document.getElementById('model-info-row');
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(API_BASE + '/health', { signal: controller.signal });
+    clearTimeout(timer);
+
+    if (res.ok) {
+      dot.className    = 'status-dot online';
+      text.textContent = 'Backend Online';
+
+      const mres  = await fetch(API_BASE + '/model-info');
+      const mdata = await mres.json();
+
+      const calBadge = mdata.is_calibrated
+        ? '<span style="background:var(--paddy-pale);color:var(--paddy);padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;margin-left:4px;">Calibrated</span>'
+        : '';
+      infoRow.innerHTML = `
+        <span>Model: <strong style="color:#fff">${mdata.best_model || 'Random Forest'}</strong>${calBadge}</span>
+        <span>·</span>
+        <span>Test Acc: <strong style="color:var(--gold)">${mdata.test_accuracy}%</strong></span>
+        <span>·</span>
+        <span>CV Acc: <strong style="color:var(--gold-pale)">${mdata.cross_validation_accuracy}%</strong></span>
+        <span>·</span>
+        <span>Crops: ${mdata.crop_classes} · Dataset: ${mdata.dataset_rows} samples</span>
+      `;
+
+      const ta = document.getElementById('dash-test-acc');
+      const ca = document.getElementById('dash-cv-acc');
+      const cl = document.getElementById('dash-classes');
+      const ds = document.getElementById('dash-dataset');
+      const mn = document.getElementById('dash-model-name');
+      if (ta) ta.textContent = mdata.test_accuracy + '%';
+      if (ca) ca.textContent = mdata.cross_validation_accuracy + '%';
+      if (cl) cl.textContent = mdata.crop_classes;
+      if (ds) ds.textContent = mdata.dataset_rows.toLocaleString('en-IN');
+      if (mn) mn.textContent = mdata.best_model || 'Random Forest (Calibrated)';
+
+    } else {
+      throw new Error('not ok');
+    }
+  } catch (e) {
+    dot.className    = 'status-dot offline';
+    text.textContent = 'Backend Offline';
+    infoRow.innerHTML = '<span style="color:#e8a99a;">⚠ Run: python app.py in /backend folder</span>';
+  }
+}
+
+function collectFormInputs() {
+  const getNum = (id, def) => {
+    const el = document.getElementById(id);
+    if (!el) return def;
+    const val = parseFloat(el.value);
+    return isNaN(val) ? def : val;
+  };
+  const getStr = (id, def) => {
+    const el = document.getElementById(id);
+    return el ? (el.value || def) : def;
+  };
+
+  const goals = Array.from(
+    document.querySelectorAll('#goal-chips .goal-chip.selected')
+  ).map(el => {
+    const clone = el.cloneNode(true);
+    const icon = clone.querySelector('.goal-chip-icon');
+    if (icon) icon.remove();
+    return clone.textContent.trim();
+  });
+
+  return {
+    N:           getNum('inp-N',           90),
+    P:           getNum('inp-P',           42),
+    K:           getNum('inp-K',           43),
+    temperature: getNum('inp-temperature', 25),
+    humidity:    getNum('inp-humidity',    80),
+    ph:          getNum('inp-ph',          6.5),
+    rainfall:    getNum('inp-rainfall',    200),
+    context: {
+      water_availability: getStr('inp-water',        'Good'),
+      irrigation:         getStr('inp-irrigation',   'Flood'),
+      season:             getStr('inp-season',       'Kharif (Jun-Oct)'),
+      last_crop:          getStr('inp-last-crop',    ''),
+      pest_level:         getStr('inp-pest',         'None'),
+      farming_pref:       getStr('inp-farming-pref', 'Chemical'),
+      goals:              goals
+    }
+  };
+}
+
+async function runAI() {
+  const payload = collectFormInputs();
+
+  if (isNaN(payload.N) || isNaN(payload.P) || isNaN(payload.K) ||
+      isNaN(payload.temperature) || isNaN(payload.humidity) || isNaN(payload.rainfall)) {
+      alert("Validation Error: Please fill in all numerical fields (N, P, K, Temperature, Humidity, Rainfall) in the form before running the AI analysis.");
+      showPage('form');
+      return;
+  }
+
+  showPage('ai');
+
+  const cont = document.getElementById('pred-container');
+  cont.innerHTML = `
+    <div class="ai-loading" style="grid-column:1/-1;">
+      <div class="spinner"></div>
+      <div class="ai-loading-text">Running ML model + Rules Engine...</div>
+      <div class="ai-loading-sub">Random Forest prediction → Context adjustment → Season filter → Goal ranking</div>
+    </div>`;
+
+  document.getElementById('api-timestamp').textContent = '';
+
+  try {
+    const response = await fetch(API_BASE + '/predict', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errDetails = (data.details || []).map(e => `<li>${e}</li>`).join('');
+      cont.innerHTML = `
+        <div class="api-error-box">
+          <strong>⚠ Input Validation Error</strong>
+          ${data.error}
+          <ul>${errDetails}</ul>
+          <br><button class="btn-sm filled" onclick="showPage('form')">← Fix Inputs</button>
+        </div>`;
+      return;
+    }
+
+    const ts = data.generated_at ? new Date(data.generated_at).toLocaleString('en-IN') : '';
+    document.getElementById('api-timestamp').textContent = ts ? '🕐 ' + ts : '';
+
+    const summaryEl = document.getElementById('ai-summary-text');
+    if (data.ai_summary) {
+      const rulesTag = data.rules_engine_active
+        ? `<span style="background:var(--sky-pale);color:var(--sky);border-radius:20px;font-size:10px;font-weight:700;padding:2px 9px;margin-left:6px;">⚙ Rules Engine Active</span>`
+        : '';
+      summaryEl.innerHTML = data.ai_summary +
+        `<br><br><em style="color:var(--paddy);font-size:12px;">
+          Analysis by ${data.model_used}${rulesTag} &nbsp;·&nbsp; Prediction #${data.prediction_id}
+          &nbsp;·&nbsp; ${data.crops_shown} crop(s) shown
+        </em>`;
+    }
+
+    renderPredictions(data.recommendations);
+    renderWhyNot(data.why_not_recommended || []);
+    document.getElementById('dash-timestamp').textContent = ts;
+
+  } catch (err) {
+    cont.innerHTML = `
+      <div class="api-error-box">
+        <strong>🔴 Cannot Connect to Backend</strong>
+        Make sure the Flask server is running.<br><br>
+        <code style="background:var(--danger-pale);padding:4px 8px;border-radius:4px;font-size:12px;">
+          cd backend &nbsp;→&nbsp; python app.py
+        </code><br><br>
+        Error: ${err.message}
+        <br><br><button class="btn-sm filled" onclick="runAI()">🔁 Retry</button>
+      </div>`;
+  }
+}
+
+function renderWhyNot(whyNotList) {
+  const section = document.getElementById('why-not-section');
+  const container = document.getElementById('why-not-container');
+  if (!whyNotList || whyNotList.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  container.innerHTML = whyNotList.map((item) => `
+    <div style="background:var(--card-bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:flex-start;gap:12px;">
+      <div style="font-size:28px;flex-shrink:0;">${item.emoji || '🌱'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:var(--text);font-size:14px;">
+          ${item.name_en} <span style="color:var(--muted);font-size:12px;font-weight:400;">(${item.name_hi})</span>
+          <span style="background:var(--danger-pale);color:var(--danger);border-radius:20px;font-size:10px;font-weight:700;padding:2px 8px;margin-left:8px;">${item.score}%</span>
+        </div>
+        <ul style="margin:6px 0 0 0;padding-left:18px;color:var(--muted);font-size:12px;line-height:1.7;">
+          ${(item.reasons || []).map(r => `<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPredictions(recommendations) {
+  const cont = document.getElementById('pred-container');
+  const visible = (recommendations || []).filter(c => c.score >= 1.0);
+
+  if (visible.length === 0) {
+    cont.innerHTML = `
+      <div class="api-error-box">
+        <strong>No significant recommendations found.</strong>
+        Try adjusting your soil or climate input values.
+      </div>`;
+    return;
+  }
+
+  const badges = [
+    { cls: 'gold',   label: '🥇 #1 Best Match', rankCls: 'rank-1' },
+    { cls: 'silver', label: '🥈 #2 Recommended', rankCls: 'rank-2' },
+    { cls: 'bronze', label: '🥉 #3 Suitable',    rankCls: 'rank-3' },
+  ];
+
+  cont.innerHTML = visible.map((crop, index) => {
+    const barClass = crop.score >= 60 ? 'high' : crop.score >= 30 ? 'medium' : 'low';
+    const scoreColor = crop.score >= 60 ? 'var(--paddy)' : crop.score >= 30 ? 'var(--gold-deep)' : 'var(--danger)';
+
+    const badge = index < 3
+      ? `<div class="rank-badge ${badges[index].cls}">${badges[index].label}</div>`
+      : `<div class="rank-badge plain">Rank #${index + 1}</div>`;
+
+    const rankCls = index < 3 ? badges[index].rankCls : '';
+
+    const confColors = {
+      'Very High': { bg: 'var(--paddy-pale)', color: 'var(--paddy)' },
+      'High':      { bg: 'var(--sky-pale)',   color: 'var(--sky)' },
+      'Moderate':  { bg: 'var(--gold-pale)',  color: 'var(--gold-deep)' },
+      'Low':       { bg: 'var(--danger-pale)',color: 'var(--danger)' }
+    };
+    const conf = crop.confidence || (crop.score > 80 ? 'Very High' : crop.score > 60 ? 'High' : crop.score > 40 ? 'Moderate' : 'Low');
+    const cc = confColors[conf] || confColors['Moderate'];
+    const confBadge = `<span style="background:${cc.bg};color:${cc.color};border-radius:20px;font-size:10px;font-weight:700;padding:2px 9px;margin-left:8px;">${conf} Confidence</span>`;
+
+    let rulesHtml = '';
+    if (crop.rules_applied && crop.rules_applied.length > 0
+        && crop.rules_applied[0] !== 'No context rules applied') {
+      const rawScore = crop._raw_score ? `<span style="color:var(--muted);font-size:10px;">(ML base: ${crop._raw_score}%)</span>` : '';
+      rulesHtml = `
+        <div style="margin-top:10px;">
+          <button class="expand-btn" onclick="toggleExpand('rules-${index}')" style="background:var(--sky-pale);color:var(--sky);border-color:var(--sky);">
+            ⚙ Context Adjustments Applied (${crop.rules_applied.length}) ${rawScore} ▾
+          </button>
+          <div class="expand-panel" id="expand-rules-${index}">
+            <ul style="margin:0;padding:0 0 0 4px;list-style:none;font-size:12px;color:var(--text);line-height:1.9;">
+              ${crop.rules_applied.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="pred-card ${rankCls}" id="pred-card-${index}">
+        ${badge}
+        <div class="pred-crop-header">
+          <div class="pred-crop-emoji">${crop.emoji || '🌱'}</div>
+          <div>
+            <div class="pred-crop-name">${crop.name_en}${confBadge}</div>
+            <div class="pred-crop-hindi">${crop.name_hi}</div>
+          </div>
+        </div>
+        <div class="conf-bar-wrap">
+          <div class="conf-label">
+            <span>Suitability Score</span>
+            <span style="color:${scoreColor}; font-size:15px;">${crop.score}%</span>
+          </div>
+          <div class="conf-bar"><div class="conf-fill ${barClass}" style="width:0%" id="bar-${index}"></div></div>
+        </div>
+        <div class="pred-reason">💡 ${crop.reason}</div>
+        <div class="pred-stats">
+          <div class="pred-stat"><div class="pred-stat-lbl">📅 Growing Season</div><div class="pred-stat-val" style="font-size:11px;line-height:1.4;">${crop.season}</div></div>
+          <div class="pred-stat"><div class="pred-stat-lbl">💧 Water Requirement</div><div class="pred-stat-val" style="font-size:11px;line-height:1.4;">${crop.water_requirement}</div></div>
+        </div>
+        ${rulesHtml}
+        <button class="expand-btn" onclick="toggleExpand(${index})">📋 View Farming Tips ▾</button>
+        <div class="expand-panel" id="expand-${index}">${crop.tips}</div>
+      </div>
+    `;
+  }).join('');
+
+  visible.forEach((crop, index) => {
+    setTimeout(() => {
+      const bar = document.getElementById('bar-' + index);
+      if (bar) bar.style.width = crop.score + '%';
+    }, 120 * index);
+  });
+}
+
+function toggleExpand(i) {
+  const p = document.getElementById('expand-' + i);
+  p.classList.toggle('open');
+}
+
+let chartInited = false;
+function initChart() { if (chartInited) return; chartInited = true; }
+
+function onAIPageLoad() { checkBackendStatus(); }
+
+// ════════════════════════════════════════════════════════════
+//  REAL-TIME MARKET PRICE DASHBOARD
+// ════════════════════════════════════════════════════════════
+let _marketForecastChart = null;
+let _marketPageLoaded = false;
+
+function onMarketPageShow() {
+  if (!_marketPageLoaded) {
+    _marketPageLoaded = true;
+    fetchMarketData();
+  }
+}
+
+async function fetchMarketData() {
+  const cropSelect = document.getElementById('market-crop-select');
+  const stateSelect = document.getElementById('market-state-select');
+  const districtInput = document.getElementById('market-district-input');
+
+  const crop = cropSelect ? cropSelect.value : 'rice';
+  const state = stateSelect ? stateSelect.value : 'Maharashtra';
+  const district = districtInput ? districtInput.value.trim() : '';
+
+  const pill = document.getElementById('market-source-pill');
+  const pillText = document.getElementById('market-source-text');
+  const tbody = document.getElementById('mandi-table-body');
+
+  if (pill) {
+    pill.className = 'market-status-pill live';
+    pillText.textContent = 'Fetching Live Rates...';
+  }
+
+  if (tbody) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--muted);"><div class="spinner" style="margin:0 auto 8px;"></div>Connecting to Mandis...</td></tr>`;
+  }
+
+  let url = `${API_BASE}/market-prices?crop=${encodeURIComponent(crop)}&limit=50`;
+  if (state && state !== 'All') url += `&state=${encodeURIComponent(state)}`;
+  if (district && district !== 'All') url += `&district=${encodeURIComponent(district)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Failed to fetch market rates');
+
+    renderMarketDashboard(data);
+  } catch (err) {
+    if (pill) {
+      pill.className = 'market-status-pill fallback';
+      pillText.textContent = 'Connection Error / Server Offline';
+    }
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--danger);">⚠️ Could not connect to backend server. Make sure <code>python app.py</code> is running.</td></tr>`;
+    }
+  }
+}
+
+function renderMarketDashboard(data) {
+  const isLive = data.is_live;
+  const pill = document.getElementById('market-source-pill');
+  const pillText = document.getElementById('market-source-text');
+
+  if (pill) {
+    if (isLive) {
+      pill.className = 'market-status-pill live';
+      pillText.textContent = `🟢 data.gov.in Live (${data.summary.total_mandis_reporting} Mandis)`;
+    } else {
+      pill.className = 'market-status-pill fallback';
+      pillText.textContent = '🟡 Model Projection (Offline Fallback)';
+    }
+  }
+
+  // 1. KPI Cards
+  const avgModal = data.summary.avg_modal_price || (data.forecast.forecast_price_avg || 0);
+  document.getElementById('kpi-avg-modal').textContent = avgModal > 0 ? `₹${avgModal.toLocaleString('en-IN')}` : '₹—';
+
+  const highestM = data.summary.highest_market;
+  if (highestM) {
+    document.getElementById('kpi-highest-mandi').textContent = highestM.market;
+    document.getElementById('kpi-highest-price').textContent = `₹${highestM.modal_price.toLocaleString('en-IN')} / qtl (${highestM.district})`;
+  } else {
+    document.getElementById('kpi-highest-mandi').textContent = 'Projected Avg';
+    document.getElementById('kpi-highest-price').textContent = `₹${(data.forecast.forecast_price_avg || 0).toLocaleString('en-IN')} / qtl`;
+  }
+
+  document.getElementById('kpi-reporting-count').textContent = data.summary.total_mandis_reporting > 0 ? `${data.summary.total_mandis_reporting} Markets` : 'Model Mode';
+  document.getElementById('kpi-price-spread').textContent = data.summary.price_spread > 0 ? `Spread: ₹${data.summary.price_spread.toLocaleString('en-IN')}` : 'Base: Agmarknet';
+
+  const trend = data.forecast.trend || 'stable';
+  const trendSymbol = data.forecast.trend_symbol || '➡️ stable';
+  document.getElementById('kpi-trend-val').textContent = trendSymbol.toUpperCase();
+  const changePct = data.forecast.change_pct || 0;
+  document.getElementById('kpi-trend-change').textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(1)}% expected over 8 wks`;
+
+  // 2. Mandi Table
+  const tbody = document.getElementById('mandi-table-body');
+  const mandis = data.live_mandis || [];
+  if (mandis.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--muted);">No mandis currently reporting live prices for this selection. Showing SARIMAX model projections above.</td></tr>`;
+  } else {
+    tbody.innerHTML = mandis.map(m => `
+      <tr>
+        <td><strong>${m.market}</strong><br><span style="font-size:10px; color:var(--muted);">${m.variety || 'Common'}</span></td>
+        <td>${m.district}</td>
+        <td>₹${m.min_price ? m.min_price.toLocaleString('en-IN') : '—'}</td>
+        <td>₹${m.max_price ? m.max_price.toLocaleString('en-IN') : '—'}</td>
+        <td><span class="mandi-price-badge">₹${m.modal_price ? m.modal_price.toLocaleString('en-IN') : '—'}</span></td>
+      </tr>
+    `).join('');
+    if (mandis[0] && mandis[0].arrival_date) {
+      document.getElementById('mandi-arrival-date').textContent = mandis[0].arrival_date;
+    }
+  }
+
+  // 3. Economics Calculator
+  const econ = data.economics || {};
+  document.getElementById('econ-yield').textContent = econ.yield_q_ha ? `${econ.yield_q_ha} qtl/ha` : '—';
+  document.getElementById('econ-cost').textContent = econ.cost_inr_ha ? `₹${econ.cost_inr_ha.toLocaleString('en-IN')}` : '—';
+  document.getElementById('econ-revenue').textContent = econ.revenue_inr_ha ? `₹${econ.revenue_inr_ha.toLocaleString('en-IN')}` : '—';
+  
+  const profitEl = document.getElementById('econ-profit');
+  const profitVal = econ.estimated_profit_inr_ha || 0;
+  profitEl.textContent = `₹${Math.abs(profitVal).toLocaleString('en-IN')}`;
+  if (profitVal < 0) {
+    profitEl.style.color = 'var(--danger)';
+  } else {
+    profitEl.style.color = 'var(--paddy)';
+  }
+
+  // 4. Render Forecast Chart (Chart.js)
+  renderForecastChart(data);
+}
+
+function renderForecastChart(data) {
+  const canvas = document.getElementById('marketForecastChart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const fc = data.forecast || {};
+  const weeks = fc.weekly_forecast || [];
+
+  if (_marketForecastChart) {
+    _marketForecastChart.destroy();
+  }
+
+  if (weeks.length === 0) return;
+
+  const labels = weeks.map((_, i) => `Wk ${i + 1}`);
+  const trend = fc.trend || 'stable';
+  const lineColor = trend === 'up' || trend === 'rising' ? '#3D7A44' : trend === 'down' || trend === 'falling' ? '#B23A2E' : '#D89A2C';
+
+  const datasets = [
+    {
+      label: `${data.crop} Forecast Price (₹/qtl)`,
+      data: weeks,
+      borderColor: lineColor,
+      backgroundColor: lineColor + '15',
+      borderWidth: 2.5,
+      pointRadius: 4,
+      pointBackgroundColor: lineColor,
+      tension: 0.35,
+      fill: true
+    }
+  ];
+
+  if (fc.confidence_high && fc.confidence_high.length === weeks.length) {
+    datasets.push({
+      label: 'High Confidence',
+      data: fc.confidence_high,
+      borderColor: lineColor + '33',
+      borderDash: [4, 4],
+      borderWidth: 1,
+      pointRadius: 0,
+      fill: false
+    });
+  }
+  if (fc.confidence_low && fc.confidence_low.length === weeks.length) {
+    datasets.push({
+      label: 'Low Confidence',
+      data: fc.confidence_low,
+      borderColor: lineColor + '33',
+      borderDash: [4, 4],
+      borderWidth: 1,
+      pointRadius: 0,
+      fill: false
+    });
+  }
+
+  _marketForecastChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: { font: { family: 'DM Sans', size: 10 }, color: '#647163', boxWidth: 12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `  ${ctx.dataset.label}: ₹${ctx.parsed.y.toLocaleString('en-IN')}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(23,36,27,0.06)' },
+          ticks: { font: { family: 'DM Sans', size: 10 }, color: '#647163' }
+        },
+        y: {
+          grid: { color: 'rgba(23,36,27,0.06)' },
+          ticks: {
+            font: { family: 'DM Sans', size: 10 },
+            color: '#647163',
+            callback: v => '₹' + v.toLocaleString('en-IN')
+          }
+        }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

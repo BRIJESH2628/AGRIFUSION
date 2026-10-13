@@ -1,0 +1,112 @@
+{
+  "rice": {
+    "avg_yield_per_hectare_quintal": 40.0,
+    "avg_input_cost_per_hectare_inr": 35000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "maize": {
+    "avg_yield_per_hectare_quintal": 35.0,
+    "avg_input_cost_per_hectare_inr": 24000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "chickpea": {
+    "avg_yield_per_hectare_quintal": 14.0,
+    "avg_input_cost_per_hectare_inr": 20000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "kidneybeans": {
+    "avg_yield_per_hectare_quintal": 12.0,
+    "avg_input_cost_per_hectare_inr": 28000.0,
+    "source": "State Agri Dept & ICAR Crop Economics Guide"
+  },
+  "pigeonpeas": {
+    "avg_yield_per_hectare_quintal": 12.0,
+    "avg_input_cost_per_hectare_inr": 22000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "mungbean": {
+    "avg_yield_per_hectare_quintal": 10.0,
+    "avg_input_cost_per_hectare_inr": 18000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "blackgram": {
+    "avg_yield_per_hectare_quintal": 10.0,
+    "avg_input_cost_per_hectare_inr": 18500.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "lentil": {
+    "avg_yield_per_hectare_quintal": 11.0,
+    "avg_input_cost_per_hectare_inr": 19000.0,
+    "source": "CACP Cost of Cultivation Studies (DES & ICAR Benchmark)"
+  },
+  "mothbeans": {
+    "avg_yield_per_hectare_quintal": 8.0,
+    "avg_input_cost_per_hectare_inr": 14000.0,
+    "source": "Arid Zone Research Institute & State Agri Dept"
+  },
+  "pomegranate": {
+    "avg_yield_per_hectare_quintal": 120.0,
+    "avg_input_cost_per_hectare_inr": 180000.0,
+    "source": "National Horticulture Board & ICAR-NRCP Solapur"
+  },
+  "banana": {
+    "avg_yield_per_hectare_quintal": 350.0,
+    "avg_input_cost_per_hectare_inr": 160000.0,
+    "source": "National Horticulture Board & ICAR-NRCB"
+  },
+  "mango": {
+    "avg_yield_per_hectare_quintal": 90.0,
+    "avg_input_cost_per_hectare_inr": 85000.0,
+    "source": "National Horticulture Board & CACP Studies"
+  },
+  "grapes": {
+    "avg_yield_per_hectare_quintal": 220.0,
+    "avg_input_cost_per_hectare_inr": 320000.0,
+    "source": "National Horticulture Board & ICAR-NRCG Pune"
+  },
+  "watermelon": {
+    "avg_yield_per_hectare_quintal": 250.0,
+    "avg_input_cost_per_hectare_inr": 75000.0,
+    "source": "State Agri Dept Horticulture Guidelines"
+  },
+  "muskmelon": {
+    "avg_yield_per_hectare_quintal": 180.0,
+    "avg_input_cost_per_hectare_inr": 65000.0,
+    "source": "State Agri Dept Horticulture Guidelines"
+  },
+  "apple": {
+    "avg_yield_per_hectare_quintal": 110.0,
+    "avg_input_cost_per_hectare_inr": 240000.0,
+    "source": "National Horticulture Board & HP State Agri Dept"
+  },
+  "orange": {
+    "avg_yield_per_hectare_quintal": 140.0,
+    "avg_input_cost_per_hectare_inr": 110000.0,
+    "source": "National Horticulture Board & ICAR-CCRI Nagpur"
+  },
+  "papaya": {
+    "avg_yield_per_hectare_quintal": 300.0,
+    "avg_input_cost_per_hectare_inr": 140000.0,
+    "source": "National Horticulture Board & State Agri Dept"
+  },
+  "coconut": {
+    "avg_yield_per_hectare_quintal": 80.0,
+    "avg_input_cost_per_hectare_inr": 55000.0,
+    "source": "Coconut Development Board (CDB India)"
+  },
+  "cotton": {
+    "avg_yield_per_hectare_quintal": 18.0,
+    "avg_input_cost_per_hectare_inr": 42000.0,
+    "source": "CACP Cost of Cultivation Studies & CICR Nagpur"
+  },
+  "jute": {
+    "avg_yield_per_hectare_quintal": 25.0,
+    "avg_input_cost_per_hectare_inr": 32000.0,
+    "source": "CACP Cost of Cultivation Studies & ICAR-CRIJAF"
+  },
+  "coffee": {
+    "avg_yield_per_hectare_quintal": 10.0,
+    "avg_input_cost_per_hectare_inr": 78000.0,
+    "source": "Coffee Board of India & ICAR Research Reports"
+  }
+}

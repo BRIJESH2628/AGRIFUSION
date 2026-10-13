@@ -1,0 +1,156 @@
+{
+  "mothbeans": {
+    "name_hi": "मोठ",
+    "season": "Kharif (June – September)",
+    "water_requirement": "Very Low (200–300 mm)",
+    "tips": "Extremely drought tolerant — ideal for arid and semi-arid regions of Rajasthan and Gujarat. Sow at 30x10 cm spacing with 8–10 kg seed per hectare. Requires no irrigation if monsoon is adequate. Harvest pods when 80% turn brown. Excellent for improving soil fertility.",
+    "emoji": "🫘"
+  },
+  "rice": {
+    "name_hi": "धान",
+    "season": "Kharif (June – November)",
+    "water_requirement": "Very High (1200–2000 mm)",
+    "tips": "Transplant seedlings after 25–30 days in nursery. Maintain 5 cm standing water during tillering stage. Apply urea in three split doses for better nitrogen uptake.",
+    "emoji": "🌾"
+  },
+  "maize": {
+    "name_hi": "मक्का",
+    "season": "Kharif (June – September)",
+    "water_requirement": "Moderate (500–800 mm)",
+    "tips": "Sow seeds at 4–5 cm depth with 60x20 cm spacing. Apply NPK 120:60:40 kg/ha. Ensure good drainage — maize cannot tolerate waterlogging. Harvest when husks turn brown.",
+    "emoji": "🌽"
+  },
+  "chickpea": {
+    "name_hi": "चना",
+    "season": "Rabi (October – March)",
+    "water_requirement": "Low (300–400 mm)",
+    "tips": "Sow after first winter rain when soil temperature drops below 25°C. Do not apply excess nitrogen — chickpea fixes its own through root nodules. Spray for pod borer at flowering stage.",
+    "emoji": "🫘"
+  },
+  "kidneybeans": {
+    "name_hi": "राजमा",
+    "season": "Kharif / Rabi (both seasons)",
+    "water_requirement": "Moderate (300–500 mm)",
+    "tips": "Requires well-drained fertile soil. Inoculate seeds with Rhizobium before sowing. Avoid waterlogging — provide raised beds in heavy rainfall areas. Harvest pods when they dry on plant.",
+    "emoji": "🫘"
+  },
+  "pigeonpeas": {
+    "name_hi": "अरहर (तूर दाल)",
+    "season": "Kharif (June – January)",
+    "water_requirement": "Low to Moderate (600–650 mm)",
+    "tips": "Inter-crop with soybean or sorghum for better land use. Requires long duration (150–180 days) — plan field accordingly. Spray monocrotophos for pod fly control at pod-filling stage.",
+    "emoji": "🌿"
+  },
+  "mungbean": {
+    "name_hi": "मूंग",
+    "season": "Kharif / Zaid (Summer)",
+    "water_requirement": "Low (350–400 mm)",
+    "tips": "Short duration crop (60–75 days) — excellent for crop rotation. Sow 20–25 kg seeds per hectare. Spray Chlorpyrifos for thrips control. Harvest in 2–3 pickings as pods mature.",
+    "emoji": "🌱"
+  },
+  "blackgram": {
+    "name_hi": "उड़द",
+    "season": "Kharif / Rabi",
+    "water_requirement": "Low to Moderate (300–450 mm)",
+    "tips": "Highly suitable after paddy harvest in Rabi season. Does not require much fertilizer — apply only phosphorus at sowing. Harvest when 70–80% pods turn black.",
+    "emoji": "🫘"
+  },
+  "lentil": {
+    "name_hi": "मसूर",
+    "season": "Rabi (October – April)",
+    "water_requirement": "Low (250–400 mm)",
+    "tips": "Grows well on residual moisture from Kharif — saves irrigation cost. Sow at 4–5 cm depth. Apply one light irrigation at pod formation. Harvest before pods shatter.",
+    "emoji": "🌾"
+  },
+  "pomegranate": {
+    "name_hi": "अनार",
+    "season": "Year-round (2–3 crops/year possible)",
+    "water_requirement": "Low to Moderate (500–800 mm)",
+    "tips": "Use drip irrigation for best results — pomegranate is highly drought tolerant once established. Practice 'Hasta Bahar' (October cropping) for premium quality fruit. Prune dead wood after each harvest. Spray Bordeaux mixture to prevent fungal diseases.",
+    "emoji": "🍎"
+  },
+  "banana": {
+    "name_hi": "केला",
+    "season": "Year-round (Planted in June–July)",
+    "water_requirement": "High (1200–2200 mm)",
+    "tips": "Plant tissue culture suckers for disease-free crop. Maintain 1.8x1.5 m spacing. Apply 200 g urea + 150 g MOP per plant every month. Provide windbreaks to protect from storm damage. Harvest when 75% mature.",
+    "emoji": "🍌"
+  },
+  "mango": {
+    "name_hi": "आम",
+    "season": "Summer harvest (March – June)",
+    "water_requirement": "Low to Moderate (750–1250 mm)",
+    "tips": "Grafted varieties give early bearing (3–4 years). Spray Paclobutrazol in October for flower induction. Stop irrigation before flowering to avoid vegetative growth. Harvest at 'physiological maturity' for export quality.",
+    "emoji": "🥭"
+  },
+  "grapes": {
+    "name_hi": "अंगूर",
+    "season": "Pruning in Oct; Harvest in March–April",
+    "water_requirement": "Moderate (700–900 mm)",
+    "tips": "Prune canes to 2–3 buds in October (back pruning). Apply Gibberellic Acid spray for better berry size. Drip irrigation is essential — 4–8 liters/vine/day. Harvest early morning to preserve sugar content.",
+    "emoji": "🍇"
+  },
+  "watermelon": {
+    "name_hi": "तरबूज",
+    "season": "Zaid/Summer (February – May)",
+    "water_requirement": "Moderate (400–600 mm)",
+    "tips": "Grows best in sandy loam soil. Sow in raised beds. Limit irrigation during ripening for sweeter fruit. Tap the fruit — hollow sound means it is ripe. One vine can yield 4–6 fruits.",
+    "emoji": "🍉"
+  },
+  "muskmelon": {
+    "name_hi": "खरबूजा",
+    "season": "Zaid/Summer (February – May)",
+    "water_requirement": "Moderate (400–500 mm)",
+    "tips": "Requires hot and dry climate during fruit ripening. Mulch the beds to conserve moisture. Stop irrigation 10 days before harvest for better aroma and sugar. Do not apply too much nitrogen — leads to poor taste.",
+    "emoji": "🍈"
+  },
+  "apple": {
+    "name_hi": "सेब",
+    "season": "Harvest: August – October (Himachal, J&K)",
+    "water_requirement": "Moderate (1000–1500 mm)",
+    "tips": "Requires chilling hours (1000–1500 hours below 7°C) — suitable only in hills. Plant high-density orchards (1250 trees/ha) for early and higher yield. Thin fruits at marble size for large-sized apples. Spray micronutrients (Boron, Zinc) for better color.",
+    "emoji": "🍎"
+  },
+  "orange": {
+    "name_hi": "संतरा",
+    "season": "Harvest: November – February (Nagpur variety)",
+    "water_requirement": "Moderate (750–1200 mm)",
+    "tips": "Nagpur mandarin is India's most popular variety. Apply Ammonium sulphate instead of urea for better fruit quality. Avoid waterlogging — use raised beds. Spray urea 1% at fruit setting stage for higher yield.",
+    "emoji": "🍊"
+  },
+  "papaya": {
+    "name_hi": "पपीता",
+    "season": "Year-round (Fruiting in 9–12 months)",
+    "water_requirement": "Moderate (1000–1500 mm)",
+    "tips": "Plant 'Red Lady' hybrid variety for high yield. Space at 1.8x1.8 m. Apply fertilizer every 2 months. Support plants with bamboo stakes in windy areas. Harvest when skin shows yellow tinge. Rich returns in less than a year.",
+    "emoji": "🍑"
+  },
+  "coconut": {
+    "name_hi": "नारियल",
+    "season": "Year-round (Fruiting year-round after 6–7 years)",
+    "water_requirement": "High (1000–2500 mm)",
+    "tips": "Plant 'Chowghat Orange Dwarf' or 'West Coast Tall' varieties. Apply 50 kg cow dung + 1.3 kg urea per tree annually. Drip irrigation at 40 liters/tree/day gives 50% more yield. Harvest every 45 days. Inter-crop cocoa or vanilla for extra income.",
+    "emoji": "🥥"
+  },
+  "cotton": {
+    "name_hi": "कपास",
+    "season": "Kharif (May – December)",
+    "water_requirement": "Moderate (500–700 mm)",
+    "tips": "Use Bt cotton hybrid varieties for bollworm resistance. Avoid dense sowing — maintain 90x60 cm spacing. Spray NPK 19:19:19 at boll formation stage. Pick cotton in the morning when moisture is low. Avoid irrigation at flowering stage.",
+    "emoji": "🌿"
+  },
+  "jute": {
+    "name_hi": "जूट",
+    "season": "Kharif (March – July)",
+    "water_requirement": "High (1200–1500 mm)",
+    "tips": "Grows best in humid Bengal-type climate. Broadcast 5–7 kg seeds per hectare. Thin seedlings at 10 cm height. Ret (soak) harvested stalks in clean water for 15–20 days to separate fibres. Used for eco-friendly bags and packaging.",
+    "emoji": "🌿"
+  },
+  "coffee": {
+    "name_hi": "कॉफी",
+    "season": "Harvest: November – February (South India)",
+    "water_requirement": "High (1500–2500 mm)",
+    "tips": "Grow under shade trees (Silver Oak) for best quality beans. Apply 40 g Zinc Sulphate per plant annually. Pulp the red cherries within 12 hours of harvest. 'Robusta' variety is hardier; 'Arabica' gives premium price. Grown mainly in Karnataka, Kerala, Tamil Nadu hills.",
+    "emoji": "☕"
+  }
+}
